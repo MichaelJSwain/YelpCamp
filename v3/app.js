@@ -5,39 +5,12 @@ const express = require("express"),
     Campground = require("./models/campground"),
     seedDB = require("./seeds")
 
-seedDB();
-
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect("mongodb://localhost/yelp_camp", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost/yelp_camp_v3", { useNewUrlParser: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-// Campground.create(
-//     {
-//         name: "Granite Hill",
-//         image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1",
-//         description: "This is a huge granite hill, no bathrooms. No water. Beautiful granite"
-//     }, function (err, campground) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             console.log("NEWLY CREATED CAMPGROUND: ");
-//             console.log(campground);
-//         }
-//     }
-// );
-
-// const campgrounds = [
-//     { name: "Salmon Creek", image: "https://i2-prod.cambridge-news.co.uk/incoming/article12958592.ece/ALTERNATES/s810/Campsites.jpg" },
-//     { name: "Granite Hill", image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1" },
-//     { name: "Mountain Goat's Rest", image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1" },
-//     { name: "Salmon Creek", image: "https://i2-prod.cambridge-news.co.uk/incoming/article12958592.ece/ALTERNATES/s810/Campsites.jpg" },
-//     { name: "Granite Hill", image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1" },
-//     { name: "Mountain Goat's Rest", image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1" },
-//     { name: "Salmon Creek", image: "https://i2-prod.cambridge-news.co.uk/incoming/article12958592.ece/ALTERNATES/s810/Campsites.jpg" },
-//     { name: "Granite Hill", image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1" },
-//     { name: "Mountain Goat's Rest", image: "https://grist.files.wordpress.com/2017/05/tent-campsite-by-river.jpg?w=1024&h=576&crop=1" }
-// ];
+seedDB();
 
 app.get("/", function (req, res) {
     res.render("landing");
@@ -79,10 +52,11 @@ app.get("/campgrounds/new", function (req, res) {
 // SHOW - show more info about a specific campground
 app.get("/campgrounds/:id", function (req, res) {
     // find the campground with provided ID
-    Campground.findById(req.params.id, function (err, foundCampground) {
+    Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {
         if (err) {
             console.log(err);
         } else {
+            console.log(foundCampground)
             // render show template with that campground
             res.render("show", { campground: foundCampground });
         }
