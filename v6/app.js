@@ -23,6 +23,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// middleware to pass user object to every route
+app.use(function (req, res, next) {
+    res.locals.currentUser = req.user;
+    next();
+});
+
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect("mongodb://localhost/yelp_camp_v6", { useNewUrlParser: true });
 app.use(bodyParser.urlencoded({ extended: true }));
